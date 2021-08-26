@@ -5,12 +5,11 @@ module.exports = app => {
     const router = require("express").Router();
 
     router.post("/createTeam", team.createTeam)
-    /*
-    router.get("/team", team.findAllTeam)
+    router.get("/teams", team.findAllTeams)
     router.get("/team/:id", team.findOneTeam)
     router.put("/team/:id", team.updateTeam)
     router.delete("/team/:id", team.deleteTeam)
-    */
+    
 
     router.post("/createMember", member.createMember)
     router.get("/members", member.findAllMembers)
