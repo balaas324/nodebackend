@@ -10,7 +10,7 @@ exports.createMember = (req,res,teamId)=>{
             message: "content cannot be empty"
         })
         return
-        }
+    }
 
     const members = {
         name: req.body.name,
