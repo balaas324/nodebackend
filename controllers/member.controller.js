@@ -1,4 +1,5 @@
-const db = require("../models")
+const db = require("../models");
+const { findAllMembers } = require("../services/member.sevice");
 const Members  = db.members
 const Op = db.Sequelize.Op;
 
@@ -33,24 +34,18 @@ exports.createMember = (req,res)=>{
         })
 }
 
-exports.findAllMembers = (req,res)=>{
+exports.findAllMembers = async (req,res)=>{
     const name = req.query.name
-    const condition = name ? { name: {[Op.like]: `%${name}%`}} : null
 
-    Members.findAll({ 
-        where: condition, 
-        include: [
-            { model: db.team, as: "team"}
-        ] 
-    })
-    .then(data=>{
-        res.send(data)
-    })
-    .catch(err=>{
+    try {
+        const allMembers = await findAllMembers(name)
+        return res.status(200).send(allMembers)
+    } catch {(err=>{
         res.status(500).send({
             message: err || "some error while find all members"
         })
-    })
+    })}
+    
 }
 
 exports.membersBelongsToTeam = (req,res)=>{
