@@ -4,7 +4,7 @@ const Op = db.Sequelize.Op;
 
 
 
-exports.createMember = (req,res,teamId)=>{
+exports.createMember = (req,res)=>{
     if(!req.body.name){
         res.status(400).send({
             message: "content cannot be empty"
@@ -14,10 +14,13 @@ exports.createMember = (req,res,teamId)=>{
 
     const members = {
         name: req.body.name,
-        teamName: req.body.teamName,
+       // teamName: req.body.teamName,  //  team table where id == teamId. as name 
         birthYear: req.body.birthYear,
-        injury: req.body.injury
+        injury: req.body.injury,
+        teamId: req.body.teamId
     }
+
+    //console.log(db.team);
 
     Members.create(members)
         .then(data=>{
@@ -33,6 +36,46 @@ exports.createMember = (req,res,teamId)=>{
 exports.findAllMembers = (req,res)=>{
     const name = req.query.name
     const condition = name ? { name: {[Op.like]: `%${name}%`}} : null
+
+    Members.findAll({ 
+        where: condition, 
+        include: [
+            { model: db.team, as: "team"}
+        ] 
+    })
+    .then(data=>{
+        res.send(data)
+    })
+    .catch(err=>{
+        res.status(500).send({
+            message: err || "some error while find all members"
+        })
+    })
+}
+
+exports.membersBelongsToTeam = (req,res)=>{
+    const teamId = req.params.teamid
+
+    Members.findAll({
+        where: { teamId: teamId },
+        include: [
+            { model: db.team, as: "team"}
+        ]
+    })
+    .then(data => {
+        res.send(data)
+    })
+    .catch(err=>{
+        res.status(500).send({
+            message: err || "some error while find all members"
+        })
+    })
+}
+
+
+exports.findAllMembersOfTeam = (req,res)=>{
+    const name = req.query.teamName
+    const condition = name ? { teamName: {[Op.like]: `%${name}%`}} : null
 
     Members.findAll({ where: condition })
         .then(data=>{

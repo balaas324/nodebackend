@@ -26,7 +26,13 @@ db.sequelize = sequelize
 db.members = require("./members.model")(sequelize, Sequelize)
 db.team = require("./team.model")(sequelize, Sequelize)
 
-//db.team.hasMany(db.members, { as: "members" })
-//db.members.belongsTo(db.team)
+db.team.hasMany(db.members, { 
+  foreignKey: "teamId", 
+  as: "members" 
+})
+db.members.belongsTo(db.team, {
+  foreignKey: "teamId",
+  as: "team"
+})  // members get teamId
 
 module.exports = db

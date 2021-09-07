@@ -4,8 +4,8 @@ module.exports=(sequelize, DataTypes)=>{
         name: { type: DataTypes.STRING },
         teamName: { type: DataTypes.STRING },
         birthYear: { type: DataTypes.INTEGER },
-        injury: { type: DataTypes.BOOLEAN }
-        //teamId: { type: DataTypes.INTEGER}
+        injury: { type: DataTypes.BOOLEAN },
+        //teamId: { type: DataTypes.INTEGER, REFERENCES: teams(id),  foreignKey: true }
     })
     return Members
 }

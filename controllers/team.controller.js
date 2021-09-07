@@ -30,16 +30,41 @@ exports.findAllTeams =(req,res)=>{
     const name = req.query.name
     const condition = name ? { name: {[Op.like]: `%${name}%`} } : null
 
-    Teams.findAll({ where: condition })
+    Teams.findAll({ 
+        where: condition, 
+        include: [
+            { model: db.members, as: "members"}
+        ] 
+    })
         .then(data=>{
             res.send(data)
         })
-        .catch(e=>{
+        .catch(err=>{
             res.status(500).send({
-                message: e || "some error finding a member by condition"
+                message: err || "some error finding a team by condition"
             })
         })
 }
+
+exports.teamHasManyMembers=(req,res)=>{
+    const id = req.params.id
+
+    Teams.findAll({
+        where: { id: id },
+        include: [
+            { model: db.members, as: "members" }
+        ]
+    })
+    .then(data=>{
+        res.send(data)
+    })
+    .catch(err=>{
+        res.status(500).send({
+            message: err || "something went wrong. do it again 4 more times and it will work"
+        })
+    })
+}
+
 
 exports.findOneTeam =(req,res)=>{
     const id = req.params.id
@@ -61,17 +86,17 @@ exports.updateTeam=(req,res)=>{
         .then(num=>{
             if (num==1){
                 res.send({
-                    message: "member updated succesfully"+id
+                    message: "team updated succesfully"+id
                 })
             } else {
                 res.send({
-                    message: `cannot update member with id=${id}`
+                    message: `cannot update team with id=${id}`
                 })
             }
         })
         .catch(err=>{
             res.status(500).send({
-                message: "error updating user with id="+id
+                message: "error updating team with id="+id
             })
         })
 }
@@ -83,17 +108,17 @@ exports.deleteTeam = (req,res)=>{
         .then(num=>{
             if(num==1){
                 res.send({
-                    message: "user was deleted succesfully"
+                    message: "team was deleted succesfully"
                 })
             } else {
                 res.send({
-                    message: `cannot delete member with id=${id}`
+                    message: `cannot delete team with id=${id}`
                 })
             }
         })
         .catch(err=>{
             res.status(500).send({
-                message: "could not delete use with id= "+id
+                message: "could not delete team with id= "+id
             })
         })
 }
