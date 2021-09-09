@@ -2,6 +2,15 @@ const db = require("../models")
 const Members  = db.members
 const Op = db.Sequelize.Op;
 
+const createMember = async (member) => {
+    try {
+        const create = await Members.create(member)
+        return create
+    } catch (err){
+        console.log(err);
+    }
+}
+
 
 const findAllMembers = async (name) => {
 
@@ -21,8 +30,67 @@ const findAllMembers = async (name) => {
     
 }
 
+const membersBelongsToTeam = async (teamId) => {
+
+    try {
+        const memberFindAll = await Members.findAll({
+            where: { teamId: teamId },
+            include: [
+                { model: db.team, as: "team"}
+            ]
+        })
+        return memberFindAll
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+const findOneMember = async (id) => {
+
+    try {
+        const findById = await Members.findByPk(id)
+        return findById
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+const updateMember = async (id,body) => {
+
+    try {
+        const update = await Members.update(body, { where: { id: id } })
+        console.log(update);
+        if (update == 1) {
+            return `member updated successfully. id: ${id}`
+        } else {
+            return `cannot update member with id=${id}`
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+const deleteMember = async (id) => {
+    
+    try {
+        const destroy = await Members.destroy({ where: { id: id } })
+        if (destroy == 1) {
+            return "user was deleted successfully"
+        } else {
+            return `cannot update member with id=${id}`
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}
+
 module.exports = {
-    findAllMembers
+    findAllMembers,
+    membersBelongsToTeam,
+    createMember,
+    findOneMember,
+    updateMember,
+    deleteMember
 }
 
 
