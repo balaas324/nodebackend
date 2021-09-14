@@ -7,15 +7,11 @@ const {
     updateMember,
     deleteMember
 } = require("../services/member.sevice");
-const Members  = db.members
-const Op = db.Sequelize.Op;
-
 
 
 exports.createMember = async (req,res)=>{
     const member = {
         name: req.body.name,
-        // teamName: req.body.teamName,  
         teamId: req.body.teamId,
         birthYear: req.body.birthYear,
         injury: req.body.injury,
@@ -40,10 +36,10 @@ exports.createMember = async (req,res)=>{
 }
 
 exports.findAllMembers = async (req,res)=>{
-    const name = req.query.name
+    const query = req.query
 
     try {
-        const allMembers = await findAllMembers(name)
+        const allMembers = await findAllMembers(query)
         return res.status(200).send(allMembers)
     } catch {(err=>{
         res.status(500).send({

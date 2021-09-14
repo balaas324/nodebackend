@@ -2,6 +2,22 @@ const db = require("../models")
 const Members  = db.members
 const Op = db.Sequelize.Op;
 
+const getPagination = (page,size) =>{
+    const limit = size ? +size : 10;
+    const offset = page ? page*limit : 0;
+
+    return { limit, offset }
+}
+
+const getPagingData = (data, page, limit) => {
+    const { count: totalItems, rows: members } = data
+    const currentPage = page ? +page : 0
+    const totalPages = Math.ceil(totalItems / limit)
+
+    return { totalItems, members, totalPages, currentPage }
+}
+
+
 const createMember = async (member) => {
     try {
         const create = await Members.create(member)
@@ -11,17 +27,23 @@ const createMember = async (member) => {
     }
 }
 
+const findAllMembers = async (query) => {
 
-const findAllMembers = async (name) => {
-
+    const { page, size, name } = query
     const condition = name ? { name: {[Op.like]: `%${name}%`}} : null
 
+    const { limit, offset } = getPagination(page,size)
+
     try {
-        const findAll = await Members.findAll({
-            where: condition, 
+        const findAll = await Members.findAndCountAll({
+            where: condition, limit, offset,
             include: [
                 { model: db.team, as: "team"}
             ]
+        })
+        .then(data=>{
+            const response = getPagingData(data,page,limit)
+            return response
         })
         return findAll
     } catch (err) {
