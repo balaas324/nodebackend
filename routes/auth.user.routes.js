@@ -19,6 +19,12 @@ module.exports = app => {
     )
 
     app.get(
+        "/api/list/member/:id",
+        [authJwt.verifyToken, authJwt.isAdmin],
+        controller.adminBoard
+    )
+
+    app.get(
         "/api/test/admin",
         [authJwt.verifyToken, authJwt.isAdmin],
         controller.adminBoard

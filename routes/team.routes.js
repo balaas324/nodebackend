@@ -8,7 +8,7 @@ module.exports = app => {
     const router = require("express").Router();
 
     router.post("/createTeam", team.createTeam)
-    router.get("/teams", controller.adminBoard, team.findAllTeams )
+    router.get("/teams",  team.findAllTeams, )
     router.get("/teams/:id", team.teamHasManyMembers)
     router.get("/team/:id", team.findOneTeam)
     router.put("/team/:id", team.updateTeam)
@@ -17,7 +17,7 @@ module.exports = app => {
     router.post("/createMember", member.createMember)
     router.get("/members", member.findAllMembers)
     router.get("/members/:teamid", member.membersBelongsToTeam)
-    router.get("/member/:id", controller.adminBoard, member.findOneMember)
+    router.get("/member/:id",  member.findOneMember)
     router.put("/member/:id", member.updateMember)
     router.delete("/member/:id", member.deleteMember)
 
